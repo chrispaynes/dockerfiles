@@ -3,13 +3,13 @@
 # that su-exec, despite its name, does not replicate the functionality
 # of exec, so we need to use both
 if [ "$(id -u)" = "0" ]; then
-  userid="jupynb"
-  groupid="jupynb"
-  exec_cmd="exec su-exec jupynb"
+	userid="jupynb"
+	groupid="jupynb"
+	exec_cmd="exec su-exec jupynb"
 else
-  userid="$(id -u)"
-  groupid="$(id -g)"
-  exec_cmd="exec"
+	userid="$(id -u)"
+	groupid="$(id -g)"
+	exec_cmd="exec"
 fi
 readonly userid
 readonly groupid

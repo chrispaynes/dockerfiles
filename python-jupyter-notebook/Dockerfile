@@ -1,20 +1,23 @@
-FROM python:3.7-alpine3.8
-
-ENV PATH /root/.local/bin:"$PATH"
+FROM continuumio/anaconda3
 
 EXPOSE 8888
 
-RUN set -ex \
-	&& apk add --no-cache --virtual .build-deps  \
-        g++ \
-    && pip3 install --user cython \ 
-        jupyter \
-        nbconvert \
-        bash
+RUN apt-get update && \
+    rm -rf /var/lib/apt/lists/*
+
+# core packages
+RUN conda install -y jupyter
+RUN conda install -y numpy
+RUN conda install -y pandas
+RUN conda install -y matplotlib
+RUN conda install -y scikit-learn
+RUN conda install -y scipy
+RUN conda install -y dask
+
+COPY ./anaconda3/kernel.json /usr/local/share/jupyter/kernels/python3/kernel.json
+RUN jupyter notebook --generate-config
+COPY ./anaconda3/jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
 
 WORKDIR /notebook
-COPY ./notebook .
-# COPY ./docker-entrypoint.sh /docker-entrypoint.sh
-# RUN chmod +x /docker-entrypoint.sh && sh /docker-entrypoint.sh
 
-CMD [ "sh", "-c", "jupyter notebook --allow-root" ]
+CMD [ "sh", "-c", "jupyter notebook --ip=0.0.0.0 --allow-root" ]
